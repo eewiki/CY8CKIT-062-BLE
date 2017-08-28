@@ -25,7 +25,15 @@
 #include "project.h"
 #include "BLE_applications.h"
 #include "I2C_1.h"
-
+ 
+/* This flag is used by application to know whether a Central device has been 
+   connected. This is updated in BLE event callback function */ 
+extern bool deviceConnected;
+ 
+/*These flags are set when the Central device writes to CCCD of the 
+  Sensor Characteristic to enable notifications */
+extern bool sendSi7005TempNotifications;
+ 
 int main(void)
 {
     __enable_irq(); /* Enable global interrupts. */
@@ -35,17 +43,30 @@ int main(void)
     Cy_WDT_Disable();    
     
     I2C_1_Start();
-
+    
     /* Start BLE component and register the customEventHandler function. This 
 	   function exposes the events from BLE component for application use */
     Cy_BLE_Start(customEventHandler);
-
+    
     for(;;)
     {
         /* Process event callback to handle BLE events. The events generated 
 		   and used for this application are inside the 'customEventHandler' 
            routine */
         Cy_BLE_ProcessEvents();
+        
+        /* If a connection is detected, handle Sensor data transmission */
+		if(deviceConnected == true)
+		{
+			/* Send Si7005 Temperature data when respective notification is 
+               enabled */
+            if(sendSi7005TempNotifications == CCCD_NOTIFY_BIT_MASK)
+			{
+				/* Send Si7005 Temperature data when respective notification is 
+                   enabled */
+                handleSi7005Temp();
+			}
+		}        
         
         /* Start the BLE advertisement if required */
         startAdvertisement();        

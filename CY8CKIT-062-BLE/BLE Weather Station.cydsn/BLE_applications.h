@@ -57,20 +57,22 @@
 /* Include guard */
 #ifndef BLE_APPLICATIONS_H
 #define BLE_APPLICATIONS_H
-
+ 
 /* Header file includes */
 #include <project.h>
-
+ 
 /* Bit mask for the notification bit in CCCD (Client Characteristic Configuration 
    Descriptor), which is written by the client device */
 #define CCCD_NOTIFY_BIT_MASK    (uint8_t) (0x01u)
-
+ 
 /* Event handler function for the three custom services in this project */
 void    customEventHandler(uint32_t event, void *eventParameter);
-
+ 
+void    handleSi7005Temp(void);
+ 
 /* Function that checks for events from the handler and starts the BLE advertisement
   if required */
 void    startAdvertisement(void);
-
+ 
 #endif
 /* [] END OF FILE */
