@@ -51,12 +51,14 @@ Mkfile.old
 dkms.conf
 
 #PSoC6
+armgcc/
+iar/
+mdk/
 Generated_Source/
 codegentemp/
 CortexM0p/
 CortexM4/
 Export/
-*.S
 *.log
 
 
