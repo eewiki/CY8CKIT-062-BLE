@@ -13,7 +13,7 @@
 <v>Output</v>
 </TreeKeys>
 <TreeStates>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="CY8CKIT-062-BLE\BLE Weather Station\TopDesign">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\I2C_1">
 <ExpandedNodeIds>
 <v>CY8CKIT-062-BLE</v>
 <v>CY8CKIT-062-BLE\BLE Weather Station</v>
@@ -53,6 +53,7 @@
 <v>CY8CKIT-062-BLE\BLE Weather Station\Shared Files\system_psoc63.h</v>
 <v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source</v>
 <v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\I2C_1</v>
 </ExpandedNodeIds>
 <VisibleNodeIds>
 <v>CY8CKIT-062-BLE</v>
@@ -95,9 +96,9 @@
 <v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6</v>
 <v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\pdl</v>
 <v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\I2C_1</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\I2C_1\I2C_1.c</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\I2C_1\I2C_1.h</v>
 <v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\I2C_1_SCBCLK</v>
-<v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\Pins and Interrupts</v>
-<v>CY8CKIT-062-BLE\BLE Weather Station\Generated_Source\PSoC6\cycodeshareexport.ld</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 <CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
@@ -196,6 +197,49 @@
 <VisibleNodeIds>
 <v>CY8CKIT-062-BLE</v>
 <v>CY8CKIT-062-BLE\BLE Weather Station</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ble_clk.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_flash.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_gpio.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_config.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_drv.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_pipe.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_sema.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_profile.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_prot.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_common.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_ezi2c.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_i2c.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_spi.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_uart.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_sysclk.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_sysint.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syslib.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syslib_gcc.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syspm.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_systick.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_trigmux.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_wdt.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cyfitter_sysint_cfg.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\I2C_1.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\main_cm0p.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\startup_psoc63_cm0plus.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\Listing Files\system_psoc63_cm0plus.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\BLE Weather Station.elf</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\BLE Weather Station.hex</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM0p\ARM_GCC_541\Debug\BLE Weather Station.map</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM4</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM4\ARM_GCC_541</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM4\ARM_GCC_541\Debug</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM4\ARM_GCC_541\Debug\Listing Files</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_ble_clk.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_flash.lst</v>
+<v>CY8CKIT-062-BLE\BLE Weather Station\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_gpio.lst</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 </TreeStates>

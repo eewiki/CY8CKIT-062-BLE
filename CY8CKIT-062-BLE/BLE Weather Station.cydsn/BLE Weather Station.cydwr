@@ -6,7 +6,12 @@
     </Group>
   </Group>
   <Data key="DataVersionKey" value="2" />
-  <Group key="DWRInstGuidMapping" />
+  <Group key="DWRInstGuidMapping">
+    <Group key="Pin">
+      <Data key="3bebfee8-790b-4297-b73a-27818bdce71c" value="scl_b" />
+      <Data key="effc734c-7d05-4681-a8b1-8c76bdd7c6d6" value="sda_b" />
+    </Group>
+  </Group>
   <Group key="M0S8Clock">
     <Group key="SystemClks">
       <Group key="0A08FE05-F885-497B-A02E-BF29CD90D1E9">
@@ -538,6 +543,18 @@
         <Data key="src_clk_id" value="" />
         <Data key="src_clk_name" value="" />
         <Data key="start_on_reset" value="False" />
+      </Group>
+    </Group>
+  </Group>
+  <Group key="Pin2">
+    <Group key="3bebfee8-790b-4297-b73a-27818bdce71c">
+      <Group key="0">
+        <Data key="Port Format" value="6,0" />
+      </Group>
+    </Group>
+    <Group key="effc734c-7d05-4681-a8b1-8c76bdd7c6d6">
+      <Group key="0">
+        <Data key="Port Format" value="6,1" />
       </Group>
     </Group>
   </Group>
