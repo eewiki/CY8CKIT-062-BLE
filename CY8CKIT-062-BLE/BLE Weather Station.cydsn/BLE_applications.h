@@ -69,6 +69,7 @@
 void    customEventHandler(uint32_t event, void *eventParameter);
  
 void    handleSi7005Temp(void);
+void    handleSi7005Humidity(void);
  
 /* Function that checks for events from the handler and starts the BLE advertisement
   if required */

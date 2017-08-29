@@ -83,11 +83,13 @@ cy_stc_ble_conn_handle_t connectionHandle;
  
 /* Array to store the present si7005 Temperature data. */
 uint8_t             Si7005TempDataArray[SI7005_DATA_LEN];
+uint8_t             Si7005HumidityDataArray[SI7005_DATA_LEN];
  
 /* These flags are set when the Central device writes to CCCD (Client 
    Characteristic Configuration Descriptor) of the si7005 Temperature 
    Characteristic to enable notifications */
 bool                sendSi7005TempNotifications = false;
+bool                sendSi7005HumidityNotifications = false;
  
 /* This flag is used by application to know whether a Central device has been 
    connected. This value is continuously updated in BLE event callback
@@ -152,6 +154,107 @@ void startAdvertisement(void)
 		Cy_BLE_GAPP_StartAdvertisement(CY_BLE_ADVERTISING_FAST,
                        CY_BLE_PERIPHERAL_CONFIGURATION_0_INDEX);	
 	}
+}
+ 
+/*******************************************************************************
+* Function Name: void sendSi7005HumidityNotification(uint8_t *Si7005HumidityDataArray)
+********************************************************************************
+* Summary:
+*  Send Si7005Humidity data as BLE Notifications. This function updates
+*  the notification handle with data and triggers the BLE component to send
+*  notification
+*
+* Parameters:
+*  Si7005HumidityDataArray:	 Si7005Humidity value
+*
+* Return:
+*  void
+*
+*******************************************************************************/
+void sendSi7005HumidityNotification(uint8_t *Si7005HumidityDataArray)
+{
+    /* 'Si7005HumiditynotificationHandle' stores  Si7005Humidit notification data
+       parameters */
+    cy_stc_ble_gatts_handle_value_ntf_t  Si7005HumiditynotificationHandle;
+ 
+    /* If stack is not busy, then send the notification */
+    if (busyStatus == CY_BLE_STACK_STATE_FREE)
+    {
+        /* Update notification handle with CapSense slider data */
+        Si7005HumiditynotificationHandle.connHandle = connectionHandle;
+        Si7005HumiditynotificationHandle.handleValPair.attrHandle = 
+                            CY_BLE_WEATHER_STATION_HUMIDITY_CHAR_HANDLE;
+        Si7005HumiditynotificationHandle.handleValPair.value.val = 
+                            Si7005HumidityDataArray;
+        Si7005HumiditynotificationHandle.handleValPair.value.len =
+                            SI7005_DATA_LEN;
+ 
+        /* Send the updated handle as part of attribute for notifications */
+        Cy_BLE_GATTS_Notification(&Si7005HumiditynotificationHandle);
+    }
+}
+ 
+/*******************************************************************************
+* Function Name: void handleSi7005Humidity(void)
+********************************************************************************
+* Summary:
+*  Read Si7005 Tempearature data
+*
+* Parameters:
+*  void
+*
+* Return:
+*  void
+*
+*******************************************************************************/
+void handleSi7005Humidity(void)
+{
+    /* CapSense Humidity value from the previous scan */
+    static uint16_t   previousSi7005Humidity;
+ 
+    /*  CapSense Humidity value from the current scan */
+    uint16_t          currentSi7005Humidity;
+    uint16_t          broadcastSi7005Humidity;    
+    float             Si7005Humidity;
+ 
+    static uint8_t tmp0 = 0;
+    static uint8_t tmp1 = 0;    
+ 
+    I2C_1_MasterSendStart(SI7005_ADDR, CY_SCB_I2C_WRITE_XFER, I2C_TIMEOUT);
+    I2C_1_MasterWriteByte(SI7005_REG_CONFIG, I2C_TIMEOUT);
+    I2C_1_MasterWriteByte(SI7005_CONFIG_HUMIDITY_START, I2C_TIMEOUT);
+    I2C_1_MasterSendStop(I2C_TIMEOUT);
+ 
+    CyDelay(100);
+ 
+    I2C_1_MasterSendStart(SI7005_ADDR, CY_SCB_I2C_WRITE_XFER, I2C_TIMEOUT);
+    I2C_1_MasterWriteByte(SI7005_REG_DATA, I2C_TIMEOUT);        
+    I2C_1_MasterSendReStart(SI7005_ADDR, CY_SCB_I2C_READ_XFER, I2C_TIMEOUT);
+    I2C_1_MasterReadByte(CY_SCB_I2C_ACK, &tmp0, I2C_TIMEOUT);
+    I2C_1_MasterReadByte(CY_SCB_I2C_NAK, &tmp1, I2C_TIMEOUT);        
+    I2C_1_MasterSendStop(I2C_TIMEOUT);
+    currentSi7005Humidity = (tmp0 << 8);
+    currentSi7005Humidity = (currentSi7005Humidity | (tmp1 & 0xFF));
+    currentSi7005Humidity = (currentSi7005Humidity >> 4);   
+    
+    //org.bluetooth.characteristic.humidity int16, % with 0.01 resolution.
+    Si7005Humidity = (float)(currentSi7005Humidity * 100.0);
+    Si7005Humidity = (float)(Si7005Humidity / 16);
+    Si7005Humidity = (float)(Si7005Humidity - 2400);
+    broadcastSi7005Humidity = (uint16_t)Si7005Humidity;
+    
+    //org.bluetooth.characteristic.humidity is in little Endian...
+    Si7005HumidityDataArray[SI7005_TEMP1_INDEX] = (int8_t)((broadcastSi7005Humidity & 0xFF00) >> 8);
+    Si7005HumidityDataArray[SI7005_TEMP0_INDEX] = (int8_t)(broadcastSi7005Humidity & 0x00FF);    
+    
+    if (currentSi7005Humidity != previousSi7005Humidity)
+    {    
+        /* Send data over slider notification */
+        sendSi7005HumidityNotification(Si7005HumidityDataArray);
+
+        /* Update the local static variable with the present Humidity */
+        previousSi7005Humidity = currentSi7005Humidity;
+    };
 }
  
 /*******************************************************************************
@@ -248,12 +351,59 @@ void handleSi7005Temp(void)
         /* Send data over Si7005 Temperature notification */
         sendSi7005TempNotification(Si7005TempDataArray);
  
-        /* Update the local static variable with the present finger
-		    position on the slider */
+        /* Update the local static variable with the present Temperature */
         previousSi7005Temp = currentSi7005Temp;
     };
 }
 
+/*******************************************************************************
+* Function Name: void handleDisconnectEventforSi7005Humidity(void)
+********************************************************************************
+* Summary:
+*  This functions handles the 'disconnect' event for the Si7005Humidity service
+*
+* Parameters:
+*  void
+*
+* Return:
+*  void
+*
+*******************************************************************************/
+void handleDisconnectEventforSi7005Humidity(void)
+{
+    /* Local variable 'attributeHandle' stores attribute parameters*/
+    cy_stc_ble_gatts_db_attr_val_info_t  attributeHandle;
+ 
+    /* Handle value to update the CCCD */
+    cy_stc_ble_gatt_handle_value_pair_t  Si7005HumidityNotificationCCCDhandle;
+ 
+    /* Local variable to store the current CCCD value */
+    uint8_t Si7005HumidityCCCDvalue[CCCD_DATA_LEN];
+ 
+    /* Reset Si7005 notification flag to prevent further notifications
+        being sent to Central device after next connection. */
+    sendSi7005HumidityNotifications = false;
+ 
+    /* Reset the Si7005 CCCD value to disable notifications */
+    /* Write the present Si7005Humidity notification status to the local variable */
+    Si7005HumidityCCCDvalue[CCCD_INDEX_0] = sendSi7005HumidityNotifications;
+    Si7005HumidityCCCDvalue[CCCD_INDEX_1] = CCCD_NULL;
+ 
+    /* Update the Si7005 CCCD handle with notification status data*/
+    Si7005HumidityNotificationCCCDhandle.attrHandle 
+    = CY_BLE_WEATHER_STATION_HUMIDITY_CLIENT_CHARACTERISTIC_CONFIGURATION_DESC_HANDLE;
+    Si7005HumidityNotificationCCCDhandle.value.val = Si7005HumidityCCCDvalue;
+    Si7005HumidityNotificationCCCDhandle.value.len = CCCD_DATA_LEN;
+ 
+    /* Report the Si7005 data to BLE component for sending data when read by 
+       the Central device */
+    attributeHandle.handleValuePair = Si7005HumidityNotificationCCCDhandle;
+    attributeHandle.offset = CCCD_NULL;
+    attributeHandle.connHandle = connectionHandle;
+    attributeHandle.flags = CY_BLE_GATT_DB_PEER_INITIATED;
+    Cy_BLE_GATTS_WriteAttributeValueCCCD(&attributeHandle);
+}
+ 
 /*******************************************************************************
 * Function Name: void handleDisconnectEventforSi7005Temp(void)
 ********************************************************************************
@@ -283,7 +433,7 @@ void handleDisconnectEventforSi7005Temp(void)
     sendSi7005TempNotifications = false;
  
     /* Reset the Si7005 CCCD value to disable notifications */
-    /* Write the present CapSense notification status to the local variable */
+    /* Write the present Si7005Temp notification status to the local variable */
     Si7005TempCCCDvalue[CCCD_INDEX_0] = sendSi7005TempNotifications;
     Si7005TempCCCDvalue[CCCD_INDEX_1] = CCCD_NULL;
 
@@ -296,6 +446,65 @@ void handleDisconnectEventforSi7005Temp(void)
     /* Report the Si7005 data to BLE component for sending data when read by 
        the Central device */
     attributeHandle.handleValuePair = Si7005TempNotificationCCCDhandle;
+    attributeHandle.offset = CCCD_NULL;
+    attributeHandle.connHandle = connectionHandle;
+    attributeHandle.flags = CY_BLE_GATT_DB_PEER_INITIATED;
+    Cy_BLE_GATTS_WriteAttributeValueCCCD(&attributeHandle);
+}
+
+/*******************************************************************************
+* Function Name: void handleWriteRequestforSi7005Humidity
+*                     (cy_stc_ble_gatts_write_cmd_req_param_t *writeRequest)
+********************************************************************************
+* Summary:
+*  This functions handles the 'write request' event for the Si7005Humidity service
+*
+* Parameters:
+*  writeRequest : pointer to the write request parameters from the central       
+*
+* Return:
+*  void
+*
+*******************************************************************************/
+void handleWriteRequestforSi7005Humidity(cy_stc_ble_gatts_write_cmd_req_param_t *writeRequest)
+{
+    /* Local variable 'attributeHandle' stores attribute parameters*/
+    cy_stc_ble_gatts_db_attr_val_info_t  attributeHandle;
+ 
+    /* Handle value to update the CCCD */
+    cy_stc_ble_gatt_handle_value_pair_t  Si7005HumidityNotificationCCCDhandle;
+ 
+    /* Local variable to store the current CCCD value */
+    uint8_t                         Si7005HumidityCCCDvalue[CCCD_DATA_LEN];
+ 
+    /* Extract the Write value sent by the Client for CapSense Button CCCD */
+    if (writeRequest->handleValPair.value.val
+        [CY_BLE_WEATHER_STATION_HUMIDITY_CLIENT_CHARACTERISTIC_CONFIGURATION_DESC_INDEX]
+         == true)
+    {
+        sendSi7005HumidityNotifications = true;
+    }
+    else if (writeRequest->handleValPair.value.val
+             [CY_BLE_WEATHER_STATION_HUMIDITY_CLIENT_CHARACTERISTIC_CONFIGURATION_DESC_INDEX]
+             == false)
+    {
+        sendSi7005HumidityNotifications = false;
+    }
+ 
+    /* Write the present CapSense notification status to the local variable */
+    Si7005HumidityCCCDvalue[CCCD_INDEX_0] = sendSi7005HumidityNotifications;
+    Si7005HumidityCCCDvalue[CCCD_INDEX_1] = CCCD_NULL;
+ 
+    /* Update CCCD handle with notification status data */
+    Si7005HumidityNotificationCCCDhandle.attrHandle 
+    = CY_BLE_WEATHER_STATION_HUMIDITY_CLIENT_CHARACTERISTIC_CONFIGURATION_DESC_HANDLE;
+    
+    Si7005HumidityNotificationCCCDhandle.value.val = Si7005HumidityCCCDvalue;
+    Si7005HumidityNotificationCCCDhandle.value.len = CCCD_DATA_LEN;
+ 
+    /* Report data to BLE component for sending data when read by the central
+       device */
+    attributeHandle.handleValuePair = Si7005HumidityNotificationCCCDhandle;
     attributeHandle.offset = CCCD_NULL;
     attributeHandle.connHandle = connectionHandle;
     attributeHandle.flags = CY_BLE_GATT_DB_PEER_INITIATED;
@@ -437,6 +646,7 @@ void customEventHandler(uint32_t event, void *eventParameter)
             /* Call the functions that handle the disconnect events for all 
                custom services */
             handleDisconnectEventforSi7005Temp();
+            handleDisconnectEventforSi7005Humidity();       
             break;
         
         /* This event is received when Central device sends a Write command
@@ -456,6 +666,11 @@ void customEventHandler(uint32_t event, void *eventParameter)
             {
                 handleWriteRequestforSi7005Temp(writeReqParameter);
             }
+            if (CY_BLE_WEATHER_STATION_HUMIDITY_CLIENT_CHARACTERISTIC_CONFIGURATION_DESC_HANDLE
+                == writeReqParameter->handleValPair.attrHandle)
+            {
+                handleWriteRequestforSi7005Humidity(writeReqParameter);
+            }            
 
             /* Send the response to the write request received. */
             Cy_BLE_GATTS_WriteRsp(connectionHandle);

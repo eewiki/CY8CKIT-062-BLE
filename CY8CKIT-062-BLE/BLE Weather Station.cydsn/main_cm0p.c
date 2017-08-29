@@ -33,6 +33,7 @@ extern bool deviceConnected;
 /*These flags are set when the Central device writes to CCCD of the 
   Sensor Characteristic to enable notifications */
 extern bool sendSi7005TempNotifications;
+extern bool sendSi7005HumidityNotifications;
  
 int main(void)
 {
@@ -66,6 +67,12 @@ int main(void)
                    enabled */
                 handleSi7005Temp();
 			}
+            if(sendSi7005HumidityNotifications == CCCD_NOTIFY_BIT_MASK)
+			{
+				/* Send Si7005 Humidity data when respective notification is 
+                   enabled */
+				handleSi7005Humidity();
+			}                  
 		}        
         
         /* Start the BLE advertisement if required */
