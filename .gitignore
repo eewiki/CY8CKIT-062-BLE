@@ -18,7 +18,6 @@
 
 # Libraries
 *.lib
-*.a
 *.la
 *.lo
 
@@ -54,7 +53,6 @@ dkms.conf
 armgcc/
 iar/
 mdk/
-Generated_Source/
 codegentemp/
 CortexM0p/
 CortexM4/
