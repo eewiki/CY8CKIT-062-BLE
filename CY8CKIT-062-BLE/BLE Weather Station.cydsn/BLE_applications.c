@@ -253,6 +253,54 @@ void handleSi7005Temp(void)
         previousSi7005Temp = currentSi7005Temp;
     };
 }
+
+/*******************************************************************************
+* Function Name: void handleDisconnectEventforSi7005Temp(void)
+********************************************************************************
+* Summary:
+*  This functions handles the 'disconnect' event for the Si7005Temp service
+*
+* Parameters:
+*  void
+*
+* Return:
+*  void
+*
+*******************************************************************************/
+void handleDisconnectEventforSi7005Temp(void)
+{
+    /* Local variable 'attributeHandle' stores attribute parameters*/
+    cy_stc_ble_gatts_db_attr_val_info_t  attributeHandle;
+ 
+    /* Handle value to update the CCCD */
+    cy_stc_ble_gatt_handle_value_pair_t  Si7005TempNotificationCCCDhandle;
+ 
+    /* Local variable to store the current CCCD value */
+    uint8_t Si7005TempCCCDvalue[CCCD_DATA_LEN];
+ 
+    /* Reset Si7005 notification flag to prevent further notifications
+        being sent to Central device after next connection. */
+    sendSi7005TempNotifications = false;
+ 
+    /* Reset the Si7005 CCCD value to disable notifications */
+    /* Write the present CapSense notification status to the local variable */
+    Si7005TempCCCDvalue[CCCD_INDEX_0] = sendSi7005TempNotifications;
+    Si7005TempCCCDvalue[CCCD_INDEX_1] = CCCD_NULL;
+
+    /* Update the Si7005 CCCD handle with notification status data*/
+    Si7005TempNotificationCCCDhandle.attrHandle 
+    = CY_BLE_WEATHER_STATION_TEMPERATURE_CLIENT_CHARACTERISTIC_CONFIGURATION_DESC_HANDLE;
+    Si7005TempNotificationCCCDhandle.value.val = Si7005TempCCCDvalue;
+    Si7005TempNotificationCCCDhandle.value.len = CCCD_DATA_LEN;
+ 
+    /* Report the Si7005 data to BLE component for sending data when read by 
+       the Central device */
+    attributeHandle.handleValuePair = Si7005TempNotificationCCCDhandle;
+    attributeHandle.offset = CCCD_NULL;
+    attributeHandle.connHandle = connectionHandle;
+    attributeHandle.flags = CY_BLE_GATT_DB_PEER_INITIATED;
+    Cy_BLE_GATTS_WriteAttributeValueCCCD(&attributeHandle);
+}
  
 /*******************************************************************************
 * Function Name: void handleWriteRequestforSi7005Temp
@@ -388,7 +436,7 @@ void customEventHandler(uint32_t event, void *eventParameter)
             
             /* Call the functions that handle the disconnect events for all 
                custom services */
-            handleSi7005Temp();
+            handleDisconnectEventforSi7005Temp();
             break;
         
         /* This event is received when Central device sends a Write command
